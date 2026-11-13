@@ -1,0 +1,210 @@
+@import "tailwindcss";
+
+@theme {
+	--font-sans    : "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+	--font-display : "Playfair Display", Georgia, serif;
+
+	--radius-sm   : 0.625rem;
+	--radius-md   : 0.875rem;
+	--radius-lg   : 1rem;
+	--radius-xl   : 1.25rem;
+	--radius-2xl  : 1.5rem;
+	--radius-3xl  : 2rem;
+	--radius-pill : 9999px;
+
+	--color-rose-400 : #F472B6;
+	--color-rose-500 : #EC4899;
+	--color-rose-600 : #DB2777;
+	--color-gold-400 : #F59E0B;
+	--color-gold-500 : #D4AF37;
+	--color-gold-600 : #B8860B;
+
+	--shadow-glow-rose    : 0 0 20px rgba( 244, 114, 182, 0.35 );
+	--shadow-glow-rose-lg : 0 0 40px rgba( 244, 114, 182, 0.25 );
+	--shadow-glow-gold    : 0 0 20px rgba( 212, 175, 55, 0.35 );
+	--shadow-glow-gold-lg : 0 0 40px rgba( 212, 175, 55, 0.25 );
+
+	--color-base          : var( --bg-base );
+	--color-subtle        : var( --bg-subtle );
+	--color-elevated      : var( --bg-elevated );
+	--color-primary       : var( --fg-primary );
+	--color-secondary     : var( --fg-secondary );
+	--color-muted-text    : var( --fg-muted );
+	--color-border        : var( --border-default );
+	--color-border-subtle : var( --border-hover );
+	--color-accent-rose   : var( --accent-primary );
+	--color-accent-gold   : var( --accent-gold );
+}
+
+:root {
+	color-scheme     : light;
+	--fg-primary     : #18181B;
+	--fg-secondary   : #52525B;
+	--fg-muted       : #A1A1AA;
+	--bg-base        : #FFFFFF;
+	--bg-subtle      : #FAFAFA;
+	--bg-elevated    : #F4F4F5;
+	--bg-overlay     : rgba( 0, 0, 0, 0.5 );
+	--border-default : #E4E4E7;
+	--border-hover   : #D4D4D8;
+	--border-active  : #F472B6;
+	--accent-primary : #EC4899;
+	--accent-gold    : #D4AF37;
+}
+
+.dark {
+	color-scheme     : dark;
+	--fg-primary     : #FAFAFA;
+	--fg-secondary   : #A1A1AA;
+	--fg-muted       : #71717A;
+	--bg-base        : #09090B;
+	--bg-subtle      : #111113;
+	--bg-elevated    : #1A1A1E;
+	--bg-overlay     : rgba( 0, 0, 0, 0.7 );
+	--border-default : #27272A;
+	--border-hover   : #3F3F46;
+	--border-active  : #F472B6;
+	--accent-primary : #F472B6;
+	--accent-gold    : #F59E0B;
+}
+
+/* Custom Text Selection (Signature Glow) */
+::selection {
+	background-color : #EC4899;
+	color            : #FFFFFF;
+}
+
+.dark ::selection {
+	background-color : #F472B6;
+	color            : #09090B;
+}
+
+/* Global Custom Scrollbars (Rose & Gold Themed) */
+* {
+	scrollbar-width : thin;
+	scrollbar-color : rgba( 244, 114, 182, 0.45 ) transparent;
+}
+
+*:hover {
+	scrollbar-color : rgba( 244, 114, 182, 0.75 ) transparent;
+}
+
+::-webkit-scrollbar {
+	width  : 7px;
+	height : 7px;
+}
+
+::-webkit-scrollbar-track {
+	background : transparent;
+}
+
+::-webkit-scrollbar-thumb {
+	background      : rgba( 244, 114, 182, 0.4 );
+	border-radius   : 9999px;
+	border          : 1.5px solid transparent;
+	background-clip : content-box;
+	transition      : background-color 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background : rgba( 236, 72, 153, 0.85 );
+}
+
+::-webkit-scrollbar-thumb:active {
+	background : #EC4899;
+}
+
+::-webkit-scrollbar-corner {
+	background : transparent;
+}
+
+::-webkit-scrollbar-button {
+	display : none;
+	width   : 0;
+	height  : 0;
+}
+
+.dark * {
+	scrollbar-color : rgba( 244, 114, 182, 0.45 ) transparent;
+}
+
+.dark *:hover {
+	scrollbar-color : rgba( 244, 114, 182, 0.85 ) transparent;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+	background      : rgba( 244, 114, 182, 0.4 );
+	border          : 1.5px solid transparent;
+	background-clip : content-box;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+	background : rgba( 244, 114, 182, 0.85 );
+}
+
+/* Number Input Spin Buttons (Flechas Rosa Glow) */
+input[type="number"] {
+	color-scheme : light;
+}
+
+.dark input[type="number"] {
+	color-scheme : dark;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+	cursor     : pointer;
+	opacity    : 0.85;
+	filter     : invert(53%) sepia(87%) saturate(3065%) hue-rotate(307deg) brightness(98%) contrast(93%);
+	transition : opacity 0.15s ease, filter 0.15s ease;
+}
+
+input[type="number"]::-webkit-inner-spin-button:hover,
+input[type="number"]::-webkit-outer-spin-button:hover {
+	opacity : 1;
+	filter  : invert(45%) sepia(90%) saturate(3500%) hue-rotate(310deg) brightness(110%) contrast(100%);
+}
+
+.dark input[type="number"]::-webkit-inner-spin-button,
+.dark input[type="number"]::-webkit-outer-spin-button {
+	opacity : 0.85;
+	filter  : invert(65%) sepia(85%) saturate(1800%) hue-rotate(305deg) brightness(105%) contrast(95%);
+}
+
+.dark input[type="number"]::-webkit-inner-spin-button:hover,
+.dark input[type="number"]::-webkit-outer-spin-button:hover {
+	opacity : 1;
+	filter  : invert(70%) sepia(90%) saturate(2800%) hue-rotate(310deg) brightness(115%) contrast(100%);
+}
+
+@utility glow-rose {
+	box-shadow : var( --shadow-glow-rose );
+}
+
+@utility glow-rose-lg {
+	box-shadow : var( --shadow-glow-rose-lg );
+}
+
+@utility glow-gold {
+	box-shadow : var( --shadow-glow-gold );
+}
+
+@utility glow-gold-lg {
+	box-shadow : var( --shadow-glow-gold-lg );
+}
+
+@utility glow-rose-text {
+	text-shadow : 0 0 12px rgba( 244, 114, 182, 0.5 );
+}
+
+@utility glow-gold-text {
+	text-shadow : 0 0 12px rgba( 212, 175, 55, 0.5 );
+}
+
+@utility no-scrollbar {
+	-ms-overflow-style : none;
+	scrollbar-width    : none;
+	&::-webkit-scrollbar {
+		display : none;
+	}
+}
