@@ -80,13 +80,14 @@
 }
 
 /* Global Custom Scrollbars (Rose & Gold Themed) */
-* {
+html, body {
 	scrollbar-width : thin;
 	scrollbar-color : rgba( 244, 114, 182, 0.45 ) transparent;
 }
 
-*:hover {
-	scrollbar-color : rgba( 244, 114, 182, 0.75 ) transparent;
+*:not(.no-scrollbar):not(.no-scrollbar *) {
+	scrollbar-width : thin;
+	scrollbar-color : rgba( 244, 114, 182, 0.45 ) transparent;
 }
 
 ::-webkit-scrollbar {
@@ -124,12 +125,8 @@
 	height  : 0;
 }
 
-.dark * {
+.dark *:not(.no-scrollbar):not(.no-scrollbar *) {
 	scrollbar-color : rgba( 244, 114, 182, 0.45 ) transparent;
-}
-
-.dark *:hover {
-	scrollbar-color : rgba( 244, 114, 182, 0.85 ) transparent;
 }
 
 .dark ::-webkit-scrollbar-thumb {
@@ -202,9 +199,52 @@ input[type="number"]::-webkit-outer-spin-button:hover {
 }
 
 @utility no-scrollbar {
-	-ms-overflow-style : none;
-	scrollbar-width    : none;
+	-ms-overflow-style : none !important;
+	scrollbar-width    : none !important;
+	scrollbar-color    : transparent transparent !important;
 	&::-webkit-scrollbar {
-		display : none;
+		display    : none !important;
+		width      : 0px !important;
+		height     : 0px !important;
+		background : transparent !important;
 	}
+	&::-webkit-scrollbar-thumb {
+		display    : none !important;
+		background : transparent !important;
+	}
+	&::-webkit-scrollbar-track {
+		display    : none !important;
+		background : transparent !important;
+	}
+	&::-webkit-scrollbar-button {
+		display    : none !important;
+		width      : 0px !important;
+		height     : 0px !important;
+	}
+	&::-webkit-scrollbar-corner {
+		display    : none !important;
+	}
+}
+
+.no-scrollbar,
+.no-scrollbar:hover,
+.no-scrollbar:active,
+.no-scrollbar:focus,
+.no-scrollbar * {
+	-ms-overflow-style : none !important;
+	scrollbar-width    : none !important;
+	scrollbar-color    : transparent transparent !important;
+}
+
+.no-scrollbar::-webkit-scrollbar,
+.no-scrollbar:hover::-webkit-scrollbar,
+.no-scrollbar *::-webkit-scrollbar,
+.no-scrollbar::-webkit-scrollbar-thumb,
+.no-scrollbar::-webkit-scrollbar-track,
+.no-scrollbar::-webkit-scrollbar-button,
+.no-scrollbar::-webkit-scrollbar-corner {
+	display    : none !important;
+	width      : 0px !important;
+	height     : 0px !important;
+	background : transparent !important;
 }
