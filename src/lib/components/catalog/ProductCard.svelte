@@ -1,22 +1,34 @@
 <script lang="ts">
-	import { Heart, Sparkles } from '@lucide/svelte';
-	import toast from 'svelte-5-french-toast';
-	import type { ProductWithRelations, ProductVariant } from '$lib/types';
-	import { currencyStore } from '$lib/stores/currency.svelte';
-	import { convertAmount, formatMoney } from '$lib/utils/currency';
-	import { getEffectivePrice, calcDiscountPercent, hasDiscount } from '$lib/utils/price';
-	import { groupByColorFamily, getImagesByColor } from '$lib/utils/colors';
+	import { Sparkles } from '@lucide/svelte';
 
-	interface Props {
+    import {
+        getEffectivePrice,
+        calcDiscountPercent,
+        hasDiscount
+    }                                               from '$lib/utils/price';
+	import type {
+        ProductWithRelations,
+        ProductVariant
+    }                                               from '$lib/types';
+	import { currencyStore }                        from '$lib/stores/currency.svelte';
+	import { convertAmount, formatMoney }           from '$lib/utils/currency';
+	import { groupByColorFamily, getImagesByColor } from '$lib/utils/colors';
+	import FavoriteButton                           from '$lib/components/ui/FavoriteButton.svelte';
+	import WhatsAppButton                           from '$lib/components/ui/WhatsAppButton.svelte';
+
+
+    interface Props {
 		product : ProductWithRelations;
 		class?  : string;
 	}
 
-	interface DragScrollAction {
+
+    interface DragScrollAction {
 		destroy : () => void;
 	}
 
-	let {
+
+    let {
 		product,
 		class : className = '',
 	}: Props = $props();
@@ -26,6 +38,9 @@
 
 	// Selected or hovered color family
 	let activeColorFamily = $state<string | null>( null );
+
+	// Selected size for exact WhatsApp ordering
+	let selectedSize = $state<string | null>( null );
 
 	// Initialize active color to first available
 	$effect( () => {
@@ -44,6 +59,22 @@
 			activeColorFamily ? v.colorFamily === activeColorFamily : true,
 		),
 	);
+
+	const activeColorObj = $derived(
+		colorGroups.find( ( g ) => g.colorFamily === activeColorFamily ),
+	);
+	const activeColorName = $derived( activeColorObj?.colorName ?? activeColorFamily );
+
+	const hasSelectedSize = $derived(
+		activeVariants.some( ( v ) => v.size === selectedSize ),
+	);
+	const resolvedSize = $derived(
+		hasSelectedSize ? selectedSize : ( activeVariants[ 0 ]?.size ?? null ),
+	);
+
+	const selectSize = ( size: string ): void => {
+		selectedSize = size;
+	};
 
 	// Prices converted to active currency
 	const effectiveClpPrice = $derived( getEffectivePrice( product ) );
@@ -71,79 +102,72 @@
 			: 0,
 	);
 
-	// Wishlist toast
-	let isFavorited = $state( false );
-
-	const toggleFavorite = ( e: MouseEvent ): void => {
-		e.preventDefault();
-		e.stopPropagation();
-		isFavorited = !isFavorited;
-		if ( isFavorited ) {
-			toast.success( `Guardado en favoritos: ${ product.name }` );
-		} else {
-			toast( `Eliminado de favoritos: ${ product.name }` );
-		}
-	};
-
 	// Drag-to-scroll action for size chips & scrollable containers
 	const dragScroll = ( node: HTMLElement ): DragScrollAction => {
 		let isDown = false;
 		let startX = 0;
 		let startScrollLeft = 0;
-		let hasMoved = false;
+		let hasDragged = false;
+		let dragTimer: ReturnType<typeof setTimeout> | null = null;
+		const DRAG_THRESHOLD = 8;
 
 		const onMouseDown = ( e: MouseEvent ): void => {
 			if ( e.button !== 0 ) {
 				return;
 			}
 			isDown = true;
-			hasMoved = false;
-			startX = e.pageX;
+			hasDragged = false;
+			startX = e.clientX;
 			startScrollLeft = node.scrollLeft;
-			node.classList.add( 'cursor-grabbing' );
-			node.classList.remove( 'cursor-grab' );
-			e.preventDefault();
-			e.stopPropagation();
 		};
 
 		const onMouseMove = ( e: MouseEvent ): void => {
 			if ( !isDown ) {
 				return;
 			}
-			e.preventDefault();
-			e.stopPropagation();
-			const x = e.pageX;
-			const walk = ( ( x - startX ) * 1.5 );
-			if ( Math.abs( walk ) > 4 ) {
-				hasMoved = true;
+			const dx = ( e.clientX - startX );
+			if ( !hasDragged && Math.abs( dx ) > DRAG_THRESHOLD ) {
+				hasDragged = true;
+				node.classList.add( 'cursor-grabbing' );
+				node.classList.remove( 'cursor-grab' );
 			}
-			node.scrollLeft = ( startScrollLeft - walk );
+			if ( hasDragged ) {
+				node.scrollLeft = ( startScrollLeft - dx );
+			}
 		};
 
-		const onMouseUp = ( e: MouseEvent ): void => {
+		const onMouseUp = (): void => {
 			if ( !isDown ) {
 				return;
 			}
 			isDown = false;
 			node.classList.remove( 'cursor-grabbing' );
 			node.classList.add( 'cursor-grab' );
-			if ( hasMoved ) {
-				e.preventDefault();
-				e.stopPropagation();
+
+			if ( hasDragged ) {
+				if ( dragTimer ) {
+					clearTimeout( dragTimer );
+				}
+				dragTimer = setTimeout( () => {
+					hasDragged = false;
+				}, 80 );
 			}
 		};
 
 		const onWheel = ( e: WheelEvent ): void => {
 			if ( e.deltaY !== 0 ) {
 				e.preventDefault();
-				e.stopPropagation();
 				node.scrollLeft += e.deltaY;
 			}
 		};
 
-		const onClick = ( e: MouseEvent ): void => {
-			e.preventDefault();
-			e.stopPropagation();
+		const onCaptureClick = ( e: MouseEvent ): void => {
+			if ( hasDragged ) {
+				e.preventDefault();
+				e.stopPropagation();
+				e.stopImmediatePropagation();
+				hasDragged = false;
+			}
 		};
 
 		const onDragStart = ( e: DragEvent ): void => {
@@ -154,16 +178,19 @@
 		window.addEventListener( 'mousemove', onMouseMove );
 		window.addEventListener( 'mouseup', onMouseUp );
 		node.addEventListener( 'wheel', onWheel, ({ passive: false }) );
-		node.addEventListener( 'click', onClick, true );
+		node.addEventListener( 'click', onCaptureClick, true );
 		node.addEventListener( 'dragstart', onDragStart );
 
 		return {
 			destroy : (): void => {
+				if ( dragTimer ) {
+					clearTimeout( dragTimer );
+				}
 				node.removeEventListener( 'mousedown', onMouseDown );
 				window.removeEventListener( 'mousemove', onMouseMove );
 				window.removeEventListener( 'mouseup', onMouseUp );
 				node.removeEventListener( 'wheel', onWheel );
-				node.removeEventListener( 'click', onClick, true );
+				node.removeEventListener( 'click', onCaptureClick, true );
 				node.removeEventListener( 'dragstart', onDragStart );
 			}
 		};
@@ -174,25 +201,29 @@
 	class="group relative flex flex-col bg-subtle border border-border/80 hover:border-rose-400/50 rounded-3xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-rose-500/10 hover:-translate-y-1 { className }"
 >
 	<!-- Card Image Section -->
-	<a
-		href="/producto/{ product.slug }"
-		class="relative aspect-3/4 w-full overflow-hidden bg-elevated block"
-	>
-		{#if ( primaryImage )}
-			<img
-				src={ primaryImage }
-				alt={ product.name }
-				loading="lazy"
-				class="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
-			/>
-		{:else}
-			<div class="w-full h-full flex items-center justify-center text-muted-text text-xs">
-				Sin imagen
-			</div>
-		{/if}
+	<div class="relative aspect-3/4 w-full overflow-hidden bg-elevated block">
+		<!-- Image Link to Product Detail -->
+		<a
+			href="/producto/{ product.slug }"
+			class="absolute inset-0 block overflow-hidden"
+			aria-label={ product.name }
+		>
+			{#if ( primaryImage )}
+				<img
+					src={ primaryImage }
+					alt={ product.name }
+					loading="lazy"
+					class="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+				/>
+			{:else}
+				<div class="w-full h-full flex items-center justify-center text-muted-text text-xs">
+					Sin imagen
+				</div>
+			{/if}
+		</a>
 
 		<!-- Floating Badges Top Left -->
-		<div class="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
+		<div class="absolute top-3 left-3 flex flex-col gap-1.5 z-10 pointer-events-none">
 			{#if ( hasDiscount( product ) )}
 				<span
 					class="px-2.5 py-1 text-[11px] font-bold tracking-tight rounded-full bg-gold-500 text-white shadow-md shadow-gold-500/30 glow-gold"
@@ -211,39 +242,47 @@
 			{/if}
 		</div>
 
-		<!-- Favorite Button Top Right -->
-		<button
-			type="button"
-			onclick={ toggleFavorite }
-			aria-label="Agregar a favoritos"
-			class="absolute top-3 right-3 p-2.5 rounded-full bg-base/80 backdrop-blur-md border border-border/60 text-secondary hover:text-rose-500 hover:bg-base transition-all duration-200 cursor-pointer shadow-sm z-10 active:scale-90"
-		>
-			<Heart
-				class="w-4 h-4 transition-colors { isFavorited ? 'text-rose-500 fill-rose-500' : '' }"
+		<!-- Actions Top Right: WhatsApp & Favorite -->
+		<div class="absolute top-3 right-3 flex items-center gap-1.5 z-10">
+			<WhatsAppButton
+				{ product }
+				selectedColor={ activeColorName }
+				selectedSize={ resolvedSize }
+				variant="icon"
+				size="sm"
 			/>
-		</button>
+			<FavoriteButton
+				productId={ product.id }
+				productName={ product.name }
+				size="sm"
+			/>
+		</div>
 
-		<!-- Size chips overlay on bottom hover (no border, no container background, hidden scrollbar, mouse drag-to-scroll) -->
+		<!-- Size chips overlay on bottom hover -->
 		{#if ( activeVariants.length > 0 )}
 			<div
 				use:dragScroll
 				class="absolute bottom-3 inset-x-2 z-10 overflow-x-auto no-scrollbar opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 hidden sm:flex cursor-grab select-none py-1"
+				style="scrollbar-width: none !important; scrollbar-color: transparent transparent !important; -ms-overflow-style: none !important;"
 			>
 				<div
 					class="flex items-center gap-1.5 px-2 { activeVariants.length > 5 ? 'justify-start' : 'justify-center' } min-w-full w-max"
 				>
 					{#each activeVariants as v ( v.id )}
-						<span
-							class="w-7 h-7 min-w-7 rounded-full flex items-center justify-center text-[10px] font-bold font-mono shrink-0 select-none shadow-md backdrop-blur-sm transition-transform duration-150 { v.stock > 0 ? 'bg-black/85 text-white hover:scale-110 hover:bg-black' : 'bg-black/35 text-white/30 line-through cursor-not-allowed' }"
-							title={ v.stock > 0 ? `${ v.stock } unidades disponibles` : 'Agotada' }
+						<button
+							type="button"
+							disabled={ v.stock <= 0 }
+							onclick={ () => selectSize( v.size ) }
+							class="w-7 h-7 min-w-7 rounded-full flex items-center justify-center text-[10px] font-bold font-mono shrink-0 select-none shadow-md backdrop-blur-sm transition-all duration-150 cursor-pointer { v.stock > 0 ? ( resolvedSize === v.size ? 'bg-rose-500 text-white ring-2 ring-white scale-110 shadow-rose-500/50' : 'bg-black/85 text-white hover:scale-110 hover:bg-black' ) : 'bg-black/35 text-white/30 line-through cursor-not-allowed' }"
+							title={ v.stock > 0 ? `${ v.size } - ${ v.stock } disponibles` : `${ v.size } - Agotada` }
 						>
 							{ v.size }
-						</span>
+						</button>
 					{/each}
 				</div>
 			</div>
 		{/if}
-	</a>
+	</div>
 
 	<!-- Card Body -->
 	<div class="p-5 flex flex-col flex-1 justify-between gap-3">
@@ -268,8 +307,11 @@
 
 		<!-- Color Swatches & Price Footer -->
 		<div class="flex items-center justify-between pt-2 border-t border-border/50 gap-2">
-			<!-- Color circles (with sufficient padding and no-scrollbar so rings are never clipped) -->
-			<div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-2 px-1.5">
+			<!-- Color circles -->
+			<div
+				class="flex items-center gap-2 overflow-x-auto no-scrollbar py-2 px-1.5"
+				style="scrollbar-width: none !important; scrollbar-color: transparent transparent !important; -ms-overflow-style: none !important;"
+			>
 				{#each colorGroups as group ( group.colorFamily )}
 					<button
 						type="button"
