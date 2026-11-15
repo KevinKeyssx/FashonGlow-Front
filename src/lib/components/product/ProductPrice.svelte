@@ -49,7 +49,7 @@
 
 <div class="flex flex-wrap items-center gap-3 { className }">
 	<!-- Effective price -->
-	<span class="font-display font-bold font-mono text-primary { sizeClasses[ size ].text } { hasDiscount ? 'text-rose-500' : '' }">
+	<span class="font-bold font-mono text-primary { sizeClasses[ size ].text } { hasDiscount ? 'text-rose-500' : '' }">
 		{ formattedEffective }
 	</span>
 
