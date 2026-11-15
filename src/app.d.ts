@@ -10,4 +10,13 @@ declare global {
 	}
 }
 
+interface ImportMetaEnv {
+	readonly PUBLIC_WHATSAPP_NUMBER?: string;
+	readonly APP_SECRET_KEY?: string;
+}
+
+interface ImportMeta {
+	readonly env: ImportMetaEnv;
+}
+
 export {};
