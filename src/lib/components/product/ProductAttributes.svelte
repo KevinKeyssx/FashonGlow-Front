@@ -13,7 +13,7 @@
 </script>
 
 <div class="flex flex-col gap-4 rounded-3xl p-6 bg-subtle border border-border { className }">
-	<h3 class="font-display font-bold text-base text-primary">
+	<h3 class="font-display font-bold text-base">
 		Ficha Técnica & Detalles
 	</h3>
 
