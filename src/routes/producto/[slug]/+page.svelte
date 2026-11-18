@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 
-    import { Sparkles, ShoppingBag, Truck, ChevronRight, MessageCircle } from '@lucide/svelte';
+    import { Sparkles, Truck, ChevronRight } from '@lucide/svelte';
 	import {
         createProductQuery,
         createCatalogQuery
@@ -16,15 +16,15 @@
 	import RelatedProducts          from '$lib/components/product/RelatedProducts.svelte';
 	import Skeleton                 from '$lib/components/ui/Skeleton.svelte';
 	import FavoriteButton           from '$lib/components/ui/FavoriteButton.svelte';
-	import WhatsAppButton           from '$lib/components/ui/WhatsAppButton.svelte';
+	import TelegramButton           from '$lib/components/ui/TelegramButton.svelte';
+	// import WhatsAppButton        from '$lib/components/ui/WhatsAppButton.svelte';
 
 
-    
-    const productQuery = createProductQuery( () => slug );
-	const catalogQuery = createCatalogQuery( () => DEFAULT_FILTERS );
-    
-    const slug      = $derived( page.params.slug! );
-	const product   = $derived( productQuery.data );
+    const slug          = $derived( page.params.slug! );
+    const productQuery  = createProductQuery( () => slug );
+	const product       = $derived( productQuery.data );
+	const catalogQuery  = createCatalogQuery( () => DEFAULT_FILTERS );
+
 
 	// Color groups
 	const colorGroups = $derived( product ? groupByColorFamily( product.variants ) : [] );
@@ -224,6 +224,7 @@
 					-->
 
 					<div class="flex-1">
+						<!-- WhatsAppButton guardado para uso futuro
 						<WhatsAppButton
 							{ product }
 							selectedColor={ selectedColorName }
@@ -231,6 +232,15 @@
 							variant="full"
 							size="lg"
 							label="Encargar por WhatsApp"
+						/>
+						-->
+						<TelegramButton
+							{ product }
+							selectedColor={ selectedColorName }
+							{ selectedSize }
+							variant="full"
+							size="lg"
+							label="Encargar por Telegram"
 						/>
 					</div>
 
@@ -244,8 +254,15 @@
 				<!-- Guarantees Pills (Atención boutique & entregas coordinadas) -->
 				<div class="grid grid-cols-3 gap-3 p-4 rounded-2xl bg-subtle border border-border text-center text-[11px] text-secondary">
 					<div class="flex flex-col items-center gap-1">
-						<MessageCircle class="w-4 h-4 text-emerald-500" />
-						<span>Atención WhatsApp</span>
+						<svg
+							viewBox="0 0 24 24"
+							fill="currentColor"
+							class="w-4 h-4 text-sky-500"
+							aria-hidden="true"
+						>
+							<path d="m20.665 3.717-17.73 6.837c-1.21.486-1.203 1.161-.222 1.462l4.552 1.42 10.532-6.645c.498-.303.953-.14.579.192l-8.533 7.701h-.002l-.313 4.674c.46 0 .663-.211.921-.46l2.211-2.15 4.599 3.397c.848.467 1.457.227 1.668-.785l3.019-14.228c.309-1.239-.473-1.8-1.282-1.434z"/>
+						</svg>
+						<span>Atención Telegram</span>
 					</div>
 					<div class="flex flex-col items-center gap-1">
 						<Truck class="w-4 h-4 text-rose-500" />
