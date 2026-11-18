@@ -1,17 +1,26 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
-	import { SlidersHorizontal, Sparkles } from '@lucide/svelte';
-	import type { CatalogFilters, SortOption, Gender } from '$lib/types';
-	import { DEFAULT_FILTERS } from '$lib/types';
-	import { parseFilters, serializeFilters, countActiveFilters } from '$lib/utils/filters';
-	import { createCatalogQuery } from '$lib/queries/catalog.queries';
-	import SearchBar from '$lib/components/catalog/SearchBar.svelte';
-	import SortSelector from '$lib/components/catalog/SortSelector.svelte';
-	import FilterSidebar from '$lib/components/catalog/FilterSidebar.svelte';
-	import FilterDrawer from '$lib/components/catalog/FilterDrawer.svelte';
-	import ActiveFilters from '$lib/components/catalog/ActiveFilters.svelte';
-	import ProductGrid from '$lib/components/catalog/ProductGrid.svelte';
+
+    import { SlidersHorizontal, Sparkles } from '@lucide/svelte';
+
+	import {
+        parseFilters,
+        serializeFilters,
+        countActiveFilters
+    }                               from '$lib/utils/filters';
+    import type {
+        CatalogFilters,
+        SortOption,
+        Gender
+    }                               from '$lib/types';
+	import { createCatalogQuery }   from '$lib/queries/catalog.queries';
+	import SearchBar                from '$lib/components/catalog/SearchBar.svelte';
+	import SortSelector             from '$lib/components/catalog/SortSelector.svelte';
+	import FilterSidebar            from '$lib/components/catalog/FilterSidebar.svelte';
+	import FilterDrawer             from '$lib/components/catalog/FilterDrawer.svelte';
+	import ActiveFilters            from '$lib/components/catalog/ActiveFilters.svelte';
+	import ProductGrid              from '$lib/components/catalog/ProductGrid.svelte';
 
 	// Filters derived directly from current URL searchParams (single source of truth)
 	const currentFilters = $derived( parseFilters( new URLSearchParams( page.url.search ) ) );
