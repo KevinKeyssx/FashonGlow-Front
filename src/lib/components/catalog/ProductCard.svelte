@@ -14,7 +14,8 @@
 	import { convertAmount, formatMoney }           from '$lib/utils/currency';
 	import { groupByColorFamily, getImagesByColor } from '$lib/utils/colors';
 	import FavoriteButton                           from '$lib/components/ui/FavoriteButton.svelte';
-	import WhatsAppButton                           from '$lib/components/ui/WhatsAppButton.svelte';
+	import TelegramButton                           from '$lib/components/ui/TelegramButton.svelte';
+	// import WhatsAppButton                        from '$lib/components/ui/WhatsAppButton.svelte';
 
 
     interface Props {
@@ -242,9 +243,18 @@
 			{/if}
 		</div>
 
-		<!-- Actions Top Right: WhatsApp & Favorite -->
+		<!-- Actions Top Right: Telegram & Favorite -->
 		<div class="absolute top-3 right-3 flex items-center gap-1.5 z-10">
+			<!-- WhatsAppButton guardado para uso futuro
 			<WhatsAppButton
+				{ product }
+				selectedColor={ activeColorName }
+				selectedSize={ resolvedSize }
+				variant="icon"
+				size="sm"
+			/>
+			-->
+			<TelegramButton
 				{ product }
 				selectedColor={ activeColorName }
 				selectedSize={ resolvedSize }
