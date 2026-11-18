@@ -26,9 +26,6 @@ importers:
       svelte-5-french-toast:
         specifier: ^2.0.6
         version: 2.0.6(svelte@5.57.3)
-      ulidx:
-        specifier: ^2.4.1
-        version: 2.4.1
       zod:
         specifier: ^4.6.7
         version: 4.6.7
@@ -464,9 +461,6 @@ packages:
     resolution: {integrity: sha512-AC/7JofJvZGrrneWNaEnJeOLUx+JlGt7tNa0wZiRPT4MY1wmfKjt2+6O2p2uz2+skll8OZZmJMNqeke7kKbNgQ==}
     hasBin: true
 
-  layerr@3.0.0:
-    resolution: {integrity: sha512-tv754Ki2dXpPVApOrjTyRo4/QegVb9eVFq4mjqp4+NM5NaX7syQvN5BBNfV/ZpAHCEHV24XdUVrBAoka4jt3pA==}
-
   lightningcss-android-arm64@1.33.0:
     resolution: {integrity: sha512-gEpRTalKdosp4Bb8qWtc2iOgE5SeIHlpS1up9bFq2wAyYhl1UdTObYiHe98zEM9SQvSoqQZ1IQD0JNpg3Ml5pg==}
     engines: {node: '>= 12.0.0'}
@@ -667,10 +661,6 @@ packages:
     resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
     engines: {node: '>=14.17'}
     hasBin: true
-
-  ulidx@2.4.1:
-    resolution: {integrity: sha512-xY7c8LPyzvhvew0Fn+Ek3wBC9STZAuDI/Y5andCKi9AX6/jvfaX45PhsDX8oxgPL0YFp0Jhr8qWMbS/p9375Xg==}
-    engines: {node: '>=16'}
 
   undici-types@8.9.0:
     resolution: {integrity: sha512-KTDyRTYX8sWmKXAikPHHSyc63CRPETMctyjKFupcC6OBLXT3xsN0e9aF7m+mIXutFWpUXuedtowG7iLOzp0kQg==}
@@ -1047,8 +1037,6 @@ snapshots:
 
   jiti@2.7.0: {}
 
-  layerr@3.0.0: {}
-
   lightningcss-android-arm64@1.33.0:
     optional: true
 
@@ -1247,10 +1235,6 @@ snapshots:
     optional: true
 
   typescript@5.9.3: {}
-
-  ulidx@2.4.1:
-    dependencies:
-      layerr: 3.0.0
 
   undici-types@8.9.0:
     optional: true
