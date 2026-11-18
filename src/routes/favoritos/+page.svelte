@@ -52,7 +52,7 @@
 			</div>
 
             <p class="text-xs sm:text-sm text-secondary max-w-xl">
-				Tus prendas guardadas. Puedes seleccionarlas y encargarlas directamente por WhatsApp con tu talla y color preferidos.
+				Tus prendas guardadas. Puedes seleccionarlas y encargarlas directamente por Telegram con tu talla y color preferidos.
 			</p>
 		</div>
 
@@ -92,7 +92,7 @@
 				</h2>
 
                 <p class="text-xs sm:text-sm text-secondary leading-relaxed">
-					Explora nuestro catálogo y pincha en el corazón de las prendas que más te gusten para guardarlas aquí y encargarlas por WhatsApp cuando quieras.
+					Explora nuestro catálogo y pincha en el corazón de las prendas que más te gusten para guardarlas aquí y encargarlas por Telegram cuando quieras.
 				</p>
 			</div>
 
@@ -106,7 +106,7 @@
 		</div>
 	{:else}
 		<!-- Products Grid -->
-		<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+		<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
 			{#each favoriteProducts as product ( product.id )}
 				<ProductCard { product } />
 			{/each}
